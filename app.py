@@ -1,9 +1,11 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask import jsonify
+from flask import request
 
 app = Flask(__name__)  
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:mandeepsingh@localhost:5432/Shoes_haven_db'
 
 db = SQLAlchemy()
 db.init_app(app)
@@ -23,35 +25,48 @@ class Shoes(db.Model):
     Thumb_Two =  db.Column(db.String(50), nullable=False)
     Thumb_Three =  db.Column(db.String(50), nullable=False)
 
-    
-
-
-
-@app.route('/Make_Shoes')
-def make_shoes():
-
-    new_shoe = Shoes(name = "Nike", price = 50, gender ="Male", main_image = "test.img", Thumb_One = "test.img",Thumb_Two = "test.img", Thumb_Three = "test.img")
- 
-
-    try:
-            db.session.add(new_shoe)
-            db.session.commit()
-    except:
-            return "There was an error adding the order"
-       
-
+    def __init__(self, name_ = "", price_ = 0, gender_ = "" , main_image_ = "" ,Thumb_one_ = "" , Thumb_Two_ = "", Thumb_Three_ = "" ):
+        self.name = name_
+        self.price = price_
+        self.gender = gender_
+        self.main_image = main_image_
+        self.Thumb_One =Thumb_one_
+        self.Thumb_Two = Thumb_Two_
+        self.Thumb_Three = Thumb_Three_
 
 @app.route('/')
 def home():
     return render_template("home.html")
+@app.route('/product/<int:shoe_id>', methods=['POST', 'GET'])
+def product(shoe_id):
+    shoe = Shoes.query.get_or_404(shoe_id)  # Fetch the shoe from the database
 
-@app.route('/product')
-def product():
-    return render_template("product.html")
+    # Handle the form submission for POST requests
+    if request.method == "POST":
+        selected_size = request.form.get("size")
+        shipping_option = request.form.get("shippingOption")
+        
+        return jsonify({
+            "message": "POST received",
+            "selected_size": selected_size,
+            "shipping_option": shipping_option
+        })
+
+    # Handle GET request, and render the template
+    return render_template("product.html", shoe=shoe)  # Pass the shoe object to the template
+
+     
 
 @app.route('/productlisting')
 def productlisting():
     return render_template("productlisting.html")
+
+
+
+    return jsonify(all_shoes)
+
+
+    
 
 
 if __name__ == '__main__':
