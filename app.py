@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask import jsonify
 from flask import request
+from sqlalchemy import or_
+from sqlalchemy import or_, cast, String
 
 app = Flask(__name__)  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:mandeepsingh@localhost:5432/Shoes_haven_db'
@@ -39,7 +41,7 @@ class Shoes(db.Model):
     #     self.Thumb_Two = Thumb_Two_
     #     self.Thumb_Three = Thumb_Three_
 
-@app.route('/add_product')
+@app.route('/add_product')#Add the data one by one in databse by get mesthod #
 def add_product():
     temp_title = "Puma RS-X DRIFT PRM"
     temp_price = 220
@@ -69,7 +71,7 @@ def add_product():
     Thumb_Two=temp_Thumb_Two,
     Thumb_Three=temp_Thumb_Three
     )
-
+#this shows if shoes save in route it show message add item otherwise shows error#
     try:
         db.session.add(new_shoe)
         db.session.commit()
@@ -102,7 +104,31 @@ def productlisting():
     return jsonify(all_shoes)
 
 
-    
+@app.route('/search')
+def search():
+    query = request.args.get('query', '').strip()
+
+    if not query:
+        return render_template("search_results.html", results=[], message="Please enter a search term.")
+
+    results = Shoes.query.filter(
+        or_(
+            Shoes.title.ilike(f"%{query}%"),
+            Shoes.model.ilike(f"%{query}%"),
+            Shoes.brand.ilike(f"%{query}%"),
+            Shoes.sizes.ilike(f"%{query}%"),
+            cast(Shoes.price, String).ilike(f"%{query}%"),
+            Shoes.image_url.ilike(f"%{query}%"),
+            Shoes.style.ilike(f"%{query}%"),
+            Shoes.category.ilike(f"%{query}%")
+        )
+    ).all()
+       
+    if not results:
+        return render_template("search_results.html", results=[], message="No matching shoes found.")
+
+    return render_template("search_results.html", results=results, message=f"Results for '{query}'")
+
 
 
 if __name__ == '__main__':

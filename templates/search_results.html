@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+</head>
+<body>
+    <h2>{{ message }}</h2>
+
+    {% if results %}
+        <ul>
+            {% for shoe in results %}
+                <li>
+                    <a href="{{ url_for('product', product_id=shoe.id) }}">
+                        <img src="{{ shoe.image_url }}" alt="{{ shoe.title }}" width="366">
+                        <strong>{{ shoe.title }}</strong> - ${{ shoe.price }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <a href="{{ url_for('home') }}">Back to Home</a>
+</body>
+</html>
