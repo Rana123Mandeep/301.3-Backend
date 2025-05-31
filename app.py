@@ -157,7 +157,7 @@ def add_product():
 def home():
     return render_template("home.html")
 
-@app.route('/product/<int:product_id>')
+@app.route('/product/<int:product_id>')#api product
 def product(product_id):
     print(product_id)
     shoes = Shoes.query.get(product_id)
@@ -166,7 +166,7 @@ def product(product_id):
 
 from datetime import date 
 
-@app.route('/sale-items')
+@app.route('/sale-items')#api sale
 def sale_items():
     today = date.today() 
 
@@ -210,6 +210,10 @@ def search():
         return render_template("search_results.html", results=[], message="No matching shoes found.")
 
     return render_template("search_results.html", results=results, message=f"Results for '{query}'")
+
+@app.route('/login')
+def login():
+    return render_template("login.html")
 
 
 
