@@ -12,8 +12,9 @@
             {% for shoe in results %}
                 <li>
                     <a href="{{ url_for('product', product_id=shoe.id) }}">
-                        <img src="{{ shoe.image_url }}" alt="{{ shoe.title }}" width="366">
-                        <strong>{{ shoe.title }}</strong> - ${{ shoe.price }}
+                        <img src="{{ shoe.image_url }}" alt="{{ shoe.title }}" width="366" style="border: 2px transparent; box-shadow: 4px 4px 10px rgba(0,0,0,0.3); height: 336px;width: 336px;;">
+                        <strong>{{ shoe.title }}</strong> - ${{ shoe.price }} 
+                        
                     </a>
                 </li>
             {% endfor %}
