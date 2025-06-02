@@ -103,8 +103,34 @@ def add_sale():
     return "Added Sale Item"
 
     
+@app.route('/women')
+def women():
+    womens_shoes = db.session.query(Shoes).filter(Shoes.category == "women").all()
+    print(womens_shoes)
+    for w in womens_shoes:
+        print(w.title)
+
+    return render_template('category.html', products = womens_shoes ,category="women")
 
     
+@app.route('/men')
+def men():
+    men_shoes = db.session.query(Shoes).filter(Shoes.category == "men").all()
+    print(men_shoes)
+    for m in men_shoes:
+        print(m.title)
+
+    return render_template('category.html' , products = men_shoes , category ="men")
+
+    
+@app.route('/kids')
+def kids():
+    kids_shoes = db.session.query(Shoes).filter(Shoes.category == "kids").all()
+    print(kids_shoes)
+    for k in kids_shoes:
+        print(k.title)
+
+    return render_template('category.html' , products = kids_shoes , category ="kids")
 
     
 
