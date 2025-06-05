@@ -9,6 +9,8 @@ from datetime import date
 from datetime import datetime, date
 from decimal import Decimal
 import sqlalchemy
+from sqlalchemy.sql.expression import func
+from datetime import date 
 
 
 app = Flask(__name__)  
@@ -33,9 +35,9 @@ class Shoes(db.Model):
     brand= db.Column(db.String(100), nullable=False)
     image_url = db.Column(db.String(1000), nullable=False)
     main_image = db.Column(db.String(100), nullable=False)
-    Thumb_One =  db.Column(db.String(100), nullable=False)
-    Thumb_Two =  db.Column(db.String(100), nullable=False)
-    Thumb_Three =  db.Column(db.String(100), nullable=False)
+    Thumb_One =  db.Column(db.String(1000), nullable=False)
+    Thumb_Two =  db.Column(db.String(1000), nullable=False)
+    Thumb_Three =  db.Column(db.String(1000), nullable=False)
 
     # def __init__(self, name_ = "", price_ = 0, gender_ = "" , main_image_ = "" ,Thumb_one_ = "" , Thumb_Two_ = "", Thumb_Three_ = "" ):
     #     self.name = name_
@@ -101,7 +103,7 @@ def add_sale():
       return "Error comitting item"
 
     return "Added Sale Item"
-
+#Home page Api's
     
 @app.route('/women')
 def women():
@@ -132,6 +134,75 @@ def kids():
 
     return render_template('category.html' , products = kids_shoes , category ="kids")
 
+@app.route('/brand/<brand_name>')
+def brand_filter(brand_name):
+    brand_shoes =Shoes.query.filter(func.lower(Shoes.brand) == brand_name.lower()).all()
+    return render_template('category.html', products=brand_shoes, category=f"Brand: {brand_name}")
+
+
+@app.route('/style/<style_name>')
+def style_filter(style_name):
+    style_shoes =Shoes.query.filter(func.lower(Shoes.style) == style_name.lower()).all()
+    return render_template('category.html', products=style_shoes, category=f"Style: {style_name}")
+
+
+
+
+
+
+
+
+
+
+
+
+    
+@app.route('/filter')
+def filter():
+    brand= request.args.get('brand')
+    model= request.args.get('model')
+    style = request.args.get('style')
+    price= request.args.get('price')
+
+    query= Shoes.query
+
+    if brand:
+     query =   query.filter(Shoes.brand == brand)
+
+    if model:
+     query =   query.filter(Shoes.model == model)
+
+    if style:
+     query =   query.filter(Shoes.brand == style)
+
+    if price:
+        if price == "0-50":
+            query = query.filter(Shoes.price < 50)
+
+        elif price=="50-100":
+            query = query.filter(Shoes.price .between (50,100))
+
+            
+        elif price=="50-100":
+            query = query.filter(Shoes.price .between (100,150))
+
+            
+        elif price=="150+":
+            query = query.filter(Shoes.price > (150))
+
+            filtered_shoes =query.all()
+
+            return render_template('product.html', shoes=filtered_shoes)
+
+
+
+
+
+     
+
+
+    
+
     
 
 
@@ -140,41 +211,40 @@ def kids():
 
 @app.route('/add_product')#Add the data one by one in databse by get mesthod #
 def add_product():
-    temp_title = "Puma RS-X DRIFT PRM"
-    temp_price = 220
-    temp_category = "men"
-    temp_sizes = "7, 8, 9, 10, 11, 12"
-    temp_model = "RS-X DRIFT PRM"
+    temp_title = "New Balance 574 Kids' Shoes"
+    temp_price = 170
+    temp_category = "kids"
+    temp_sizes = "3, 4, 5, 6, 7"
+    temp_model = "574"
     temp_style = "Lifestyle Shoes"
-    temp_brand = "Puma"
-    temp_image_url = "https://images.footlocker.com/is/image/FLEU/244205134604_01?wid=500&hei=500&fmt=png-alpha" 
-    temp_main_image = "puma_rsxdrift_main.jpg"
-    temp_Thumb_one = "puma_rsxdrift_thumb1.jpg"
-    temp_Thumb_Two = "puma_rsxdrift_thumb2.jpg"
-    temp_Thumb_Three = "puma_rsxdrift_thumb3.jpg"
+    temp_brand = "New Balance"
+    temp_image_url = "https://www.footlocker.co.nz/en/category/kids/shoes/new-balance/574.html"
+    temp_main_image = "new_balance_574_kids_main.jpg"
+    temp_Thumb_one = "new_balance_574_kids_thumb1.jpg"
+    temp_Thumb_Two = "new_balance_574_kids_thumb2.jpg"
+    temp_Thumb_Three = "new_balance_574_kids_thumb3.jpg"
 
-    
     new_shoe = Shoes(
-    title=temp_title,
-    price=temp_price,
-    category=temp_category,
-    sizes=temp_sizes,
-    model=temp_model,
-    style=temp_style,
-    brand=temp_brand,
-    image_url=temp_image_url,
-    main_image=temp_main_image,
-    Thumb_One=temp_Thumb_one,
-    Thumb_Two=temp_Thumb_Two,
-    Thumb_Three=temp_Thumb_Three
-    )
+        title=temp_title,
+        price=temp_price,
+        category=temp_category,
+        sizes=temp_sizes,
+        model=temp_model,
+        style=temp_style,
+        brand=temp_brand,
+        image_url=temp_image_url,
+        main_image=temp_main_image,
+        Thumb_One=temp_Thumb_one,
+        Thumb_Two=temp_Thumb_Two,
+        Thumb_Three=temp_Thumb_Three
+        )
 #this shows if shoes save in route it show message add item otherwise shows error#
     try:
-        db.session.add(new_shoe)
-        db.session.commit()
+            db.session.add(new_shoe)
+            db.session.commit()
     except:
-        return "Error comitting item"
-    
+            return "Error comitting item"
+        
     return "Added Item"
 
 
@@ -184,13 +254,21 @@ def home():
     return render_template("home.html")
 
 @app.route('/product/<int:product_id>')#api product
+# def product(product_id):
+#     print(product_id)
+#     shoes = Shoes.query.get(product_id)
+#     print(shoes.title)
+#     return render_template("product.html", shoe=shoes)
 def product(product_id):
-    print(product_id)
-    shoes = Shoes.query.get(product_id)
-    print(shoes.title)
-    return render_template("product.html", shoe=shoes)
+    # Get the main product
+    shoe = Shoes.query.get_or_404(product_id)
 
-from datetime import date 
+    # Get 3 random shoes excluding the current one
+    related_shoes = Shoes.query.filter(Shoes.id != product_id).order_by(func.random()).limit(5).all()#shows some romdam pic fom databse
+
+    return render_template("product.html", shoe=shoe, related_shoes=related_shoes)
+
+
 
 @app.route('/sale-items')#api sale
 def sale_items():
@@ -207,9 +285,9 @@ def sale_items():
 
 @app.route('/productlisting')
 def productlisting():
-    return render_template("productlisting.html")
-
-    return jsonify(all_shoes)
+    all_shoes = Shoes.query.all()  # Fetch all products from DB
+    print(all_shoes)
+    return render_template("productlisting.html", products=all_shoes)
 
 
 @app.route('/search')

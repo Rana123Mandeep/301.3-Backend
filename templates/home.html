@@ -65,22 +65,20 @@
                         <li>
                             <div class="row">
                                 <div class="col-4">
-                                    <a class="dropdown-item" href="#">Nike</a>
-                                    <a class="dropdown-item" href="#">Adidas</a>
-                                    <a class="dropdown-item" href="#">Vans</a>
-                                    <a class="dropdown-item" href="#">Etnies</a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='Nike') }}">Nike</a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='Adidas') }}">Adidas</a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='Vans') }}">Vans</a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='Converse') }}">Converse</a>
                                 </div>
                                 <div class="col-4">
-                                    <a class="dropdown-item" href="#">DC Shoes</a>
-                                    <a class="dropdown-item" href="#">Skechers</a>
-                                    <a class="dropdown-item" href="#">New Balance</a>
-                                    <a class="dropdown-item" href="#">Converse</a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='DC ') }}">DC </a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='Skechers') }}">Skechers</a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='New Balance') }}">New Balance</a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='ascis') }}">ascis</a>
                                 </div>
                                 <div class="col-4">
-                                    <a class="dropdown-item" href="#">Dr. Martens</a>
-                                    <a class="dropdown-item" href="#">Puma</a>
-                                    <a class="dropdown-item" href="#">Reebok</a>
-                                    <a class="dropdown-item" href="#">Crocs</a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='Puma') }}">Puma</a>
+                                    <a class="dropdown-item" href="{{ url_for('brand_filter', brand_name='Reebok') }}">Reebok</a>
                                 </div>
                             </div>
                         </li>

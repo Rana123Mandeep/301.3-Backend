@@ -116,33 +116,20 @@
         </div>
 
         <!-- Related Products Section -->
-        <div class="mt-5">
-            <h5 class="fw-bold mb-3">You May Also Like</h5>
-            <div class="d-flex overflow-auto gap-3 pb-2">
-                <div class="card" style="min-width: 150px;">
-                    <img src="https://images.footlocker.com/is/image/FLEU/316475371304_01?wid=500&hei=500&fmt=png-alpha" class="card-img-top" alt="Related Shoe 1">
-                    <div class="card-body p-2">
-                        <p class="card-text small">Nike Air Max 90</p>
-                        <p class="fw-semibold">$120.00</p>
-                    </div>
-                </div>
-                <div class="card" style="min-width: 150px;">
-                    <img src="static/images/shoe3.webp" class="card-img-top" alt="Related Shoe 2">
-                    <div class="card-body p-2">
-                        <p class="card-text small">Nike Dunk Low</p>
-                        <p class="fw-semibold">$100.00</p>
-                    </div>
-                </div>
-                <div class="card" style="min-width: 150px;">
-                    <img src="static/images/shoe4.webp" class="card-img-top" alt="Related Shoe 3">
-                    <div class="card-body p-2">
-                        <p class="card-text small">Nike Blazer Mid</p>
-                        <p class="fw-semibold">$105.00</p>
-                    </div>
-                </div>
+       <div class="mt-5">
+    <h5 class="fw-bold mb-3">You May Also Like</h5>
+    <div class="d-flex overflow-auto gap-3 pb-2">
+        {% for item in related_shoes %}
+        <div class="card" id={{item.id}} onclick="go_to_product({{item.id}})"  style="width: 160px; height: 260px; ">
+            <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.title }}">
+            <div class="card-body p-2">
+                <p class="card-text small">{{ item.title }}</p>
+                <p class="fw-semibold">${{ item.price }}</p>
             </div>
         </div>
+        {% endfor %}
     </div>
+</div>
 
     <!-- Filter Sidebar -->
     <div class="offcanvas offcanvas-end" tabindex="-1" id="filterSidebar" aria-labelledby="filterSidebarLabel">
@@ -212,6 +199,12 @@
                 document.getElementById('main-shoe-img').src = this.src;
             });
         });
+        
+        const go_to_product = productid => {
+            window.location.href=`http://127.0.0.1:5000/product/${productid}`
+             
+        }
+
     </script>
 </body>
 
