@@ -53,9 +53,7 @@
             <h2 class="fw-bold">{{shoe.title}}</h2>
             <ul class="nav">
                 <li class="nav-item">
-                    <button class="btn btn-dark mx-1" data-bs-toggle="offcanvas" data-bs-target="#filterSidebar">
-                        <i class="bi bi-funnel-fill"></i> Filter
-                    </button>
+
                 </li>
             </ul>
         </div>
@@ -132,130 +130,7 @@
     </div>
 </div>
 
-    <!-- Filter Sidebar -->
-     <div class="offcanvas offcanvas-end" tabindex="-1" id="filterSidebar" aria-labelledby="filterSidebarLabel">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="filterSidebarLabel">Filters</h5>
-            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div> 
-        <div class="offcanvas-body">
-            <!-- Brand Filter -->
-            <div class="mb-3">
-                <label for="brandSelect" class="form-label">Brand</label>
-                <select class="form-select" id="brandSelect">
-                    <option selected>Choose a brand</option>
-                    <option value="Nike">Nike</option>
-                    <option value="Adidas">Adidas</option>
-                    <option value="Skechers">Skechers"</option>
-                    <option value="DC">DC"</option>
-
-
-                </select>
-            </div>
-
-            <!-- Model Filter -->
-              <label for="modelSelect" class="form-label">Model</label>
-                <select class="form-select" id="modelSelect">
-                    <optgroup label="Nike">
-                        <option>Air Force 1</option>
-                        <option>Air Max</option>
-                    </optgroup>
-                    <optgroup label="Adidas">
-                        <option>Adidas Stan Smitht</option>
-                        <option>Adidas Ultraboost 1.0 Women's Shoes</option>
-                    </optgroup>
-                </select>
-            </div>
--- <div class="mb-3">
-              
-            <!-- Style Filter -->
-            <div class="mb-3">
-                <label for="styleSelect" class="form-label">Style</label>
-                <select class="form-select" id="styleSelect">
-                    <option value="casual"> skate shoesl</option>
-                    <option value="athletic">lifestyle shoes</option>
-                    <option value="high-top">running shoes</option>
-                    
-                </select>
-            </div>
-
-            <!-- Price Filter -->
-             <div class="mb-3">
-                <label for="priceRange" class="form-label">Price Range ($)</label>
-                <input type="range" class="form-range" min="50" max="300" id="priceRange">
-                <form id="filterForm"> -->
-  <!-- Your filter inputs go here -->
-  <!-- <button type="submit" class="btn btn-primary">Apply Filters</button> -->
-</form> 
-
-
-
-<!-- Filter Sidebar -->
-<div class="offcanvas offcanvas-end" tabindex="-1" id="filterSidebar" aria-labelledby="filterSidebarLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="filterSidebarLabel">Filters</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        <form id="filterForm" method="GET" action="/filter">
-            <!-- Brand Filter -->
-            <div class="mb-3">
-                <label for="brandSelect" class="form-label">Brand</label>
-                <select class="form-select" id="brandSelect" name="brand">
-                    <option value="">Choose a brand</option>
-                    <option value="Nike">Nike</option>
-                    <option value="Adidas">Adidas</option>
-                    <option value="Skechers">Skechers</option>
-                    <option value="DC">DC</option>
-                </select>
-            </div>
-
-            <!-- Model Filter -->
-            <div class="mb-3">
-                <label for="modelSelect" class="form-label">Model</label>
-                <select class="form-select" id="modelSelect" name="model">
-                    <optgroup label="Nike">
-                        <option value="Air Force 1">Air Force 1</option>
-                        <option value="Air Max">Air Max</option>
-                    </optgroup>
-                    <optgroup label="Adidas">
-                        <option value="Adidas Stan Smith">Adidas Stan Smith</option>
-                        <option value="Adidas Ultraboost 1.0 Women's Shoes">Adidas Ultraboost 1.0 Women's Shoes</option>
-                    </optgroup>
-                </select>
-            </div>
-
-            <!-- Style Filter -->
-            <div class="mb-3">
-                <label for="styleSelect" class="form-label">Style</label>
-                <select class="form-select" id="styleSelect" name="style">
-                    <option value="">Choose a style</option>
-                    <option value="casual">Skate shoes</option>
-                    <option value="athletic">Lifestyle shoes</option>
-                    <option value="high-top">Running shoes</option>
-                </select>
-            </div>
-
-            <!-- Price Filter -->
-            <div class="mb-3">
-                <label for="priceSelect" class="form-label">Price Range ($)</label>
-                <select class="form-select" id="priceSelect" name="price">
-                    <option value="">Select a price range</option>
-                    <option value="0-50">Under $50</option>
-                    <option value="50-100">$50 - $100</option>
-                    <option value="100-150">$100 - $150</option>
-                    <option value="150+">Above $150</option>
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Apply Filters</button>
-        </form>
-
-        <!-- Result area (optional for client-side render) -->
-        <div id="result"></div>
-    </div>
-</div>
-
+  
 
 <!-- Result area -->
 <div id="result"></div>
@@ -346,7 +221,45 @@ document.querySelectorAll('.shipping-option').forEach(swatch => {
 
     alert(`Added to cart with ${selectedShipping} shipping and size ${selectedSize}`);
 });
+ const Filter_Product = () => {
+            const brand_select = document.getElementById('brandFilter')
+            const brand = brand_select.value
+            console.log(brand)
 
+            const model_product = document.getElementById('modelFilter')
+            const model = model_product.value
+            console.log(model)
+
+            
+            const style_product = document.getElementById('styleFilter')
+            const style = style_product.value
+            console.log(style)
+
+            
+            const price_product = document.getElementById('priceFilter')
+            const price = price_product.value
+            console.log(price)
+
+
+
+            fetch('/filterbar', {
+
+                method: 'POST',
+
+                headers: { 'Content-Type': 'application/json' },
+
+                body: JSON.stringify({ brand: brand , model: model, style: style , price: price  })
+
+
+            })
+                .then(res => res.text())
+                .then(html => {
+                    document.body.innerHTML = html;
+                });
+
+
+
+        } 
 
 
 

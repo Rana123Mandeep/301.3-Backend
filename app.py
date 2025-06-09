@@ -244,7 +244,7 @@ def filterbar():
 
 
     # filter_shoes = db.session.query(Shoes).filter(Shoes.brand == brand, Shoes.model == model , Shoes.style == style  , Shoes.price == price).all()
-    return render_template('productlisting.html', products = filter_shoes  )
+    return render_template('productlisting.html',  products = filter_shoes  )
 
 
      
