@@ -314,9 +314,24 @@
         }
 
         const Filter_Product = () => {
-            const select = document.getElementById('brandFilter')
-            const brand = select.value
+            const brand_select = document.getElementById('brandFilter')
+            const brand = brand_select.value
             console.log(brand)
+
+            const model_product = document.getElementById('modelFilter')
+            const model = model_product.value
+            console.log(model)
+
+            
+            const style_product = document.getElementById('styleFilter')
+            const style = style_product.value
+            console.log(style)
+
+            
+            const price_product = document.getElementById('priceFilter')
+            const price = price_product.value
+            console.log(price)
+
 
 
             fetch('/filterbar', {
@@ -325,7 +340,7 @@
 
                 headers: { 'Content-Type': 'application/json' },
 
-                body: JSON.stringify({ brand: brand })
+                body: JSON.stringify({ brand: brand , model: model, style: style , price: price  })
 
 
             })

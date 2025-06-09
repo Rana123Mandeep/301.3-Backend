@@ -208,53 +208,61 @@ def newarrival():
 
 
     
-@app.route('/filter')
-def filter():
-    brand= request.args.get('brand')
-    model= request.args.get('model')
-    style = request.args.get('style')
-    price= request.args.get('price')
+# @app.route('/filter')
+# def filter():
+#     brand= request.args.get('brand')
+#     model= request.args.get('model')
+#     style = request.args.get('style')
+#     price= request.args.get('price')
 
-    query= Shoes.query
+#     query= Shoes.query
 
-    if brand:
-     query =   query.filter(Shoes.brand == brand)
+#     if brand:
+#      query =   query.filter(Shoes.brand == brand)
 
-    if model:
-     query =   query.filter(Shoes.model == model)
+#     if model:
+#      query =   query.filter(Shoes.model == model)
 
-    if style:
-     query =   query.filter(Shoes.brand == style)
+#     if style:
+#      query =   query.filter(Shoes.brand == style)
 
-    if price:
-        if price == "0-50":
-            query = query.filter(Shoes.price < 50)
-
-        elif price=="50-100":
-            query = query.filter(Shoes.price .between (50,100))
-
-            
-        elif price=="50-100":
-            query = query.filter(Shoes.price .between (100,150))
-
-            
-        elif price=="150+":
-            query = query.filter(Shoes.price > (150))
-
-            filtered_shoes =query.all()
-
-            return render_template('product.html', shoes=filtered_shoes)
+    
+#             return render_template('product.html', shoes=filtered_shoes)
         
-        filtered_shoes = query.all()
-    return render_template('product.html', shoes=filtered_shoes)
+#         filtered_shoes = query.all()
+#     return render_template('product.html', shoes=filtered_shoes)
 
 
 
 @app.route('/filterbar' , methods =['POST'])
 def filterbar():
     brand = request.json.get('brand')
-    print(brand)
-    filter_shoes = db.session.query(Shoes).filter(Shoes.brand == brand).all()
+    model = request.json.get('model')
+    style = request.json.get('style')
+    price = request.json.get('price')
+    print(brand, model , style , price)
+
+
+    if price:
+        if price == "0-50":
+             filter_shoes = db.session.query(Shoes).filter(Shoes.price < 50)
+
+        elif price=="50-100":
+             filter_shoes = db.session.query(Shoes).filter(Shoes.price .between (50,100))
+
+            
+        elif price=="50-100":
+             filter_shoes = db.session.query(Shoes).filter(Shoes.price .between (100,150))
+
+            
+        elif price=="150+":
+             filter_shoes = db.session.query(Shoes).filter(Shoes.price > (150))
+
+            
+
+
+
+    # filter_shoes = db.session.query(Shoes).filter(Shoes.brand == brand, Shoes.model == model , Shoes.style == style  , Shoes.price == price).all()
     return render_template('productlisting.html', products = filter_shoes  )
 
 
