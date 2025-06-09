@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template ,json
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask import jsonify
@@ -34,7 +34,7 @@ class Shoes(db.Model):
     style = db.Column(db.String(100), nullable=False)
     brand= db.Column(db.String(100), nullable=False)
     image_url = db.Column(db.String(1000), nullable=False)
-    main_image = db.Column(db.String(100), nullable=False)
+    # main_image = db.Column(db.String(1000), nullable=False)
     Thumb_One =  db.Column(db.String(1000), nullable=False)
     Thumb_Two =  db.Column(db.String(1000), nullable=False)
     Thumb_Three =  db.Column(db.String(1000), nullable=False)
@@ -103,6 +103,53 @@ def add_sale():
       return "Error comitting item"
 
     return "Added Sale Item"
+
+
+#table for New Arivial
+class Newarrivals(db.Model):
+    __tablename__ = "Newarrivals"
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.Numeric, nullable=False)
+    category = db.Column(db.String(100), nullable=False)
+    sizes = db.Column(db.String(100), nullable=False)
+    model = db.Column(db.String(100), nullable=False)
+    style = db.Column(db.String(100), nullable=False)
+    brand = db.Column(db.String(100), nullable=False)
+    image_url = db.Column(db.String(1000), nullable=False)
+    
+
+@app.route('/newarrivals')
+def add_newarrivals():
+    temp_title = "ASICS Gel-Kayano 28"
+    temp_price = Decimal("160.00")
+    temp_category = "men"
+    temp_sizes = "7, 8, 9, 10, 11, 12"
+    temp_model = "Gel-Kayano 28"
+    temp_style = "Running"
+    temp_brand = "ASICS"
+    temp_image_url = "https://cdn.asics.com/media/catalog/product/2/1/2111A037_020_SR_RT_GLB.jpg"
+    temp_category = "newarrival" 
+
+    new_item = Newarrivals(
+        title=temp_title,
+        price=temp_price,
+        category=temp_category,
+        sizes=temp_sizes,
+        model=temp_model,
+        style=temp_style,
+        brand=temp_brand,
+        image_url=temp_image_url,
+    )
+
+    try:
+        db.session.add(new_item)
+        db.session.commit()
+        return "Added New Item"
+    except Exception as e:
+        db.session.rollback()
+        return f"Error: {e}"
 #Home page Api's
     
 @app.route('/women')
@@ -145,11 +192,15 @@ def style_filter(style_name):
     style_shoes =Shoes.query.filter(func.lower(Shoes.style) == style_name.lower()).all()
     return render_template('category.html', products=style_shoes, category=f"Style: {style_name}")
 
+@app.route('/newarrival')
+def newarrival():
+    newarrival_shoes = Newarrivals.query.filter(Newarrivals.category == "newarrival").all()
 
+    for shoe in newarrival_shoes:
+        print(shoe.title, shoe.category)
 
-
-
-
+    # Pass the result to the template
+    return render_template('category.html', products=newarrival_shoes, category="newarrival")
 
 
 
@@ -193,9 +244,18 @@ def filter():
             filtered_shoes =query.all()
 
             return render_template('product.html', shoes=filtered_shoes)
+        
+        filtered_shoes = query.all()
+    return render_template('product.html', shoes=filtered_shoes)
 
 
 
+@app.route('/filterbar' , methods =['POST'])
+def filterbar():
+    brand = request.json.get('brand')
+    print(brand)
+    filter_shoes = db.session.query(Shoes).filter(Shoes.brand == brand).all()
+    return render_template('productlisting.html', products = filter_shoes  )
 
 
      
@@ -219,10 +279,11 @@ def add_product():
     temp_style = "Lifestyle Shoes"
     temp_brand = "New Balance"
     temp_image_url = "https://www.footlocker.co.nz/en/category/kids/shoes/new-balance/574.html"
-    temp_main_image = "new_balance_574_kids_main.jpg"
+    # temp_main_image = "new_balance_574_kids_main.jpg"
     temp_Thumb_one = "new_balance_574_kids_thumb1.jpg"
     temp_Thumb_Two = "new_balance_574_kids_thumb2.jpg"
     temp_Thumb_Three = "new_balance_574_kids_thumb3.jpg"
+    temp_Thumb_Four = "new_balance_574_kids_thumb3.jpg"
 
     new_shoe = Shoes(
         title=temp_title,
@@ -233,10 +294,11 @@ def add_product():
         style=temp_style,
         brand=temp_brand,
         image_url=temp_image_url,
-        main_image=temp_main_image,
+        # main_image=temp_main_image,
         Thumb_One=temp_Thumb_one,
         Thumb_Two=temp_Thumb_Two,
-        Thumb_Three=temp_Thumb_Three
+        Thumb_Three=temp_Thumb_Three,
+        
         )
 #this shows if shoes save in route it show message add item otherwise shows error#
     try:

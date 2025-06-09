@@ -19,7 +19,13 @@
                 <h5 class="card-title">{{ item.title }}</h5>
                 <p class="card-text"><strong>Brand:</strong> {{ item.brand }}</p>
                 <p class="card-text"><strong>Style:</strong> {{ item.style }}</p>
-                <p class="card-text"><strong>Sizes:</strong> {{ item.sizes }}</p>
+           <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-outline-dark size-button">7</button>
+                    <button class="btn btn-outline-dark size-button">8</button>
+                    <button class="btn btn-outline-dark size-button">9</button>
+                    <button class="btn btn-outline-dark size-button">10</button>
+                    <button class="btn btn-outline-dark size-button">11</button>
+                </div>
                 <p class="card-text">
                     <strong>Price:</strong> ${{ item.price }}<br>
                     <strong>Discount:</strong> {{ item.discount_percentage }}%
@@ -42,5 +48,42 @@
 
     </div>
 </div>
+
+<script>
+         document.querySelectorAll('.size-button').forEach(swatch => {
+  swatch.addEventListener('click', function () {
+   
+    document.querySelectorAll('.size-button').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    this.classList.add('active');
+
+    const selectedSize = this.textContent;
+    console.log('Selected size:', selectedSize);
+
+  });
+});
+
+document.querySelectorAll('.btn.btn-dark.mt-4.w-100').forEach(button => {
+    button.addEventListener('click', () => {
+        const card = button.closest('.card');
+        const selectedSize = card.querySelector('.size-button.active')?.textContent;
+
+        if (!selectedSize) {
+            alert('Please select a size before adding to cart.');
+            return;
+        }
+
+        console.log('Adding to cart with:', {
+            size: selectedSize,
+        });
+
+        alert(`Added to cart with size ${selectedSize}`);
+    });
+});
+
+ 
+</script>
 </body>
 </html>

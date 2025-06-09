@@ -20,6 +20,12 @@
             {% endfor %}
         </ul>
     {% endif %}
+    <script>
+        const go_to_product = productid => {
+            window.location.href=`http://127.0.0.1:5000/product/${productid}`
+             
+        }
+    </script>
 
     <a href="{{ url_for('home') }}">Back to Home</a>
 </body>
