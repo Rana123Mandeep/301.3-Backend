@@ -194,43 +194,15 @@ def style_filter(style_name):
 
 @app.route('/newarrival')
 def newarrival():
-    newarrival_shoes = Newarrivals.query.filter(Newarrivals.category == "newarrival").all()
+    newarrival_shoes = Newarrivals.query.filter().all()
 
     for shoe in newarrival_shoes:
         print(shoe.title, shoe.category)
 
     # Pass the result to the template
-    return render_template('category.html', products=newarrival_shoes, category="newarrival")
+    return render_template('category.html', products=newarrival_shoes, category="NewArrivials")
 
 
-
-
-
-
-    
-# @app.route('/filter')
-# def filter():
-#     brand= request.args.get('brand')
-#     model= request.args.get('model')
-#     style = request.args.get('style')
-#     price= request.args.get('price')
-
-#     query= Shoes.query
-
-#     if brand:
-#      query =   query.filter(Shoes.brand == brand)
-
-#     if model:
-#      query =   query.filter(Shoes.model == model)
-
-#     if style:
-#      query =   query.filter(Shoes.brand == style)
-
-    
-#             return render_template('product.html', shoes=filtered_shoes)
-        
-#         filtered_shoes = query.all()
-#     return render_template('product.html', shoes=filtered_shoes)
 
 
 
