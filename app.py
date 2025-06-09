@@ -214,6 +214,15 @@ def filterbar():
     price = request.json.get('price')
     print(brand, model , style , price)
 
+    query = db.session.query(Shoes)
+
+    if brand:
+        query = query.filter(Shoes.brand == brand)
+    if model:
+        query = query.filter(Shoes.model == model)
+    if style:
+        query = query.filter(Shoes.style == style)
+
 
     if price:
         if price == "0-50":
@@ -231,7 +240,7 @@ def filterbar():
              filter_shoes = db.session.query(Shoes).filter(Shoes.price > (150))
 
             
-
+    filter_shoes = query.all()
 
 
     # filter_shoes = db.session.query(Shoes).filter(Shoes.brand == brand, Shoes.model == model , Shoes.style == style  , Shoes.price == price).all()
