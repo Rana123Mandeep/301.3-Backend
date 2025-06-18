@@ -108,7 +108,7 @@
                 </div>
 
                 <!-- Add to Cart Button -->
-                <button class="btn btn-dark mt-4 w-100">
+                <button class="btn btn-dark mt-4 w-100" onclick="updateCartQuantity({{shoe.id}},7,1)">
                     <i class="bi bi-cart-plus"></i> Add to Cart
                 </button>
             </div>
@@ -261,11 +261,15 @@ document.querySelectorAll('.shipping-option').forEach(swatch => {
 
         } 
 
+    
+        
+
 
 
         
 
     </script>
+    <script src="static/js/cart.js"></script>
 </body>
 
 </html>

@@ -1,112 +1,121 @@
-// static/js/productlistings.js
+let currentIndex = 0;
+const itemsPerPage = 6;
+let allProducts = [];
+let filteredProducts = [];
+let selectedCategory = '';
 
-const products = [
-    { title: "Nike Air Force 1", price: 90 },
-    { title: "Nike Air Max 90", price: 110 },
-    { title: "Nike Air Max 95", price: 120 },
-    { title: "Nike Air Jordan", price: 150 },
-    { title: "Nike Dunk", price: 100 },
-    { title: "Nike Pegasus", price: 95 },
-    { title: "Adidas Samba", price: 85 },
-    { title: "Adidas Gazelle", price: 90 },
-    { title: "Adidas Stan Smith", price: 95 },
-    { title: "Adidas Ultraboost", price: 140 },
-    { title: "Adidas Superstar", price: 100 },
-    { title: "Vans Old Skool", price: 70 },
-    { title: "Vans Authentic", price: 65 },
-    { title: "Vans Sk8-Hi", price: 80 },
-    { title: "Vans Slip-On", price: 60 },
-    { title: "Etnies Marana", price: 75 },
-    { title: "Etnies Jameson", price: 70 },
-    { title: "Etnies Scout", price: 65 },
-    { title: "DC Court Graffik", price: 80 },
-    { title: "DC Lynx OG", price: 90 },
-    { title: "DC Manteca", price: 85 },
-    { title: "Skechers GOwalk", price: 75 },
-    { title: "Skechers D'Lites", price: 85 },
-    { title: "Skechers Arch Fit", price: 95 },
-    { title: "New Balance 574", price: 80 },
-    { title: "New Balance 990", price: 140 },
-    { title: "New Balance 9060", price: 150 },
-    { title: "Converse Chuck Taylor All Star", price: 65 },
-    { title: "Converse Chuck 70", price: 85 },
-    { title: "Converse One Star", price: 70 },
-    { title: "Dr. Martens 1460", price: 150 },
-    { title: "Dr. Martens 2976", price: 160 },
-    { title: "Dr. Martens 101", price: 140 },
-    { title: "Puma Suede Classic", price: 75 },
-    { title: "Puma RS-X", price: 110 },
-    { title: "Puma Clyde", price: 85 },
-    { title: "Reebok Classic Leather", price: 80 },
-    { title: "Reebok Club C", price: 75 },
-    { title: "Reebok Nano", price: 130 },
-    { title: "Crocs Classic Clog", price: 45 },
-    { title: "Crocs Mellow Slide", price: 50 },
-    { title: "Crocs Brooklyn Low Wedge", price: 55 }
-];
+export async function fetchProducts() {
+    try {
+        /* // --- JSON fetch (active for now)
+        const response = await fetch('static/data/products.json');
+        if (!response.ok) throw new Error('Failed to load products JSON');
 
-const productsPerPage = 12;
-let currentPage = 1;
+        allProducts = await response.json(); */
 
-function renderProducts() {
-    const start = (currentPage - 1) * productsPerPage;
-    const end = start + productsPerPage;
+        // Fetch products from the database
+        const response = await fetch('/api/products');
+        if (!response.ok) throw new Error('Failed to load products from DB');
+
+        allProducts = await response.json();
+
+        // Apply filters from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const brandFilter = urlParams.get("brand");
+        const styleFilter = urlParams.get("style");
+        const categoryFilter = urlParams.get('category');
+        filteredProducts = allProducts;
+
+        if (brandFilter) {
+            filteredProducts = filteredProducts.filter(p => p.brand.toLowerCase() === brandFilter.toLowerCase());
+        }
+
+        if (styleFilter) {
+            filteredProducts = filteredProducts.filter(p => p.style.toLowerCase() === styleFilter.toLowerCase());
+        }
+
+        if (categoryFilter) {
+            filteredProducts = filteredProducts.filter(p =>
+                p.category && p.category.toLowerCase() === categoryFilter.toLowerCase()
+            );
+        }
+
+        // Initial display
+        currentIndex = 0;
+        document.getElementById('load-more-btn').style.display = 'block';
+        displayNextProductsChunk();
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById('product-list').innerHTML = '<p class="text-danger">Failed to load products.</p>';
+    }
+}
+
+function displayProducts(products, append = false) {
     const container = document.getElementById('product-list');
-    let cardsHtml = '';
+    if (!append) container.innerHTML = '';
 
-    products.slice(start, end).forEach(product => {
-        cardsHtml += `
-            <div class="col-md-3 mb-4">
-                <div class="product-card">
-                    <img src="https://via.placeholder.com/300x200?text=No+Image" alt="${product.title}">
-                    <div class="card-body">
-                        <h5 class="card-title">${product.title}</h5>
-                        <p class="card-text">NZD $${product.price.toFixed(2)}</p>
-                        <a href="#" class="btn-buy">Buy Now</a>
-                    </div>
-                </div>
-            </div>
+    if (products.length === 0 && !append) {
+        container.innerHTML = '<p class="text-center">No products found.</p>';
+        return;
+    }
+
+    products.forEach(product => {
+        const productURL = `/product.html?id=${product.id}`;
+        const productHTML = `
+          <div class="col-12 col-sm-6 col-md-4 mb-4">
+            <a href="${productURL}" class="text-decoration-none text-dark">
+              <div class="card h-100 shadow-sm">
+                <img src="${product.image}" class="card-img-top" alt="${product.model}" />
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title">${product.brand} ${product.model}</h5>
+                  <p class="card-text fw-bold">$${product.price}</p>
+                  </div>
+              </div>
+            </a>
+          </div>
         `;
+        container.insertAdjacentHTML('beforeend', productHTML);
     });
-
-    container.innerHTML = cardsHtml;
-    renderPagination();
 }
 
-function renderPagination() {
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    const pagination = document.getElementById('pagination');
-    let buttons = '';
+function displayNextProductsChunk() {
+    const nextProducts = filteredProducts.slice(currentIndex, currentIndex + itemsPerPage);
+    displayProducts(nextProducts, true);
+    currentIndex += itemsPerPage;
 
-    buttons += `
-        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-            <button class="page-link" onclick="goToPage(${currentPage - 1})">Previous</button>
-        </li>
-    `;
-
-    for (let i = 1; i <= totalPages; i++) {
-        buttons += `
-            <li class="page-item ${i === currentPage ? 'active' : ''}">
-                <button class="page-link" onclick="goToPage(${i})">${i}</button>
-            </li>
-        `;
-    }
-
-    buttons += `
-        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-            <button class="page-link" onclick="goToPage(${currentPage + 1})">Next</button>
-        </li>
-    `;
-
-    pagination.innerHTML = buttons;
-}
-
-function goToPage(page) {
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    if (page >= 1 && page <= totalPages) {
-        currentPage = page;
-        renderProducts();
+    if (currentIndex >= filteredProducts.length) {
+        document.getElementById('load-more-btn').style.display = 'none';
     }
 }
 
-document.addEventListener("DOMContentLoaded", renderProducts);
+// Initial page setup
+window.addEventListener('DOMContentLoaded', () => {
+    fetchProducts();
+
+    // Bind "Load More" button
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', displayNextProductsChunk);
+    }
+
+    // Bind category filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            selectedCategory = btn.getAttribute('data-filter').toLowerCase();
+
+            filteredProducts = allProducts.filter(p =>
+                p.category && p.category.toLowerCase() === selectedCategory
+            );
+
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            currentIndex = 0;
+            document.getElementById('product-list').innerHTML = '';
+            document.getElementById('load-more-btn').style.display = 'block';
+            displayNextProductsChunk();
+        });
+    });
+});
+

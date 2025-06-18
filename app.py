@@ -11,10 +11,14 @@ from decimal import Decimal
 import sqlalchemy
 from sqlalchemy.sql.expression import func
 from datetime import date 
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
 
 
 app = Flask(__name__)  
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:mandeepsingh@localhost:5432/Shoes_haven_db'
+
 
 db = SQLAlchemy()
 db.init_app(app)
@@ -146,10 +150,60 @@ def add_newarrivals():
     try:
         db.session.add(new_item)
         db.session.commit()
-        return "Added New Item"
+    except: 
+      return "Error comitting item"
+      return "Added New Item"
+
+    
+
+class User(db.Model):
+    __tablename__= "users"
+
+    
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(80), nullable=False)
+    last_name = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    address = db.Column(db.String(255))
+    password = db.Column(db.String(512), nullable=False)
+
+
+@app.route('/user')
+def add_user():
+    temp_first_name = "mandeep"
+    temp_last_name = "singh"
+    temp_email = "writetomandeeprana@gmail.com"
+    temp_phone = "1234567890"
+    temp_address = "14,wellinton"
+    temp_password = "123456"  
+
+    new_user = User(
+        first_name=temp_first_name,
+        last_name=temp_last_name,
+        email=temp_email,
+        phone=temp_phone,
+        address=temp_address,
+        password=temp_password,
+    )
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return "Added New user"
     except Exception as e:
         db.session.rollback()
         return f"Error: {e}"
+
+   
+
+
+
+
+    
+
+    
+
 #Home page Api's
     
 @app.route('/women')
@@ -245,16 +299,7 @@ def filterbar():
 
     # filter_shoes = db.session.query(Shoes).filter(Shoes.brand == brand, Shoes.model == model , Shoes.style == style  , Shoes.price == price).all()
     return render_template('productlisting.html',  products = filter_shoes  )
-
-
-     
-
-
     
-
-    
-
-
 
 
 
@@ -298,6 +343,15 @@ def add_product():
         
     return "Added Item"
 
+
+
+@app.route('/cart')
+def cart():
+    return render_template("cart.html")
+
+@app.route('/checkout')
+def checkout():
+    return render_template("checkout.html")
 
 
 @app.route('/')
@@ -366,9 +420,9 @@ def search():
 
     return render_template("search_results.html", results=results, message=f"Results for '{query}'")
 
-@app.route('/login')
-def login():
-    return render_template("login.html")
+    
+
+
 
 
 
